@@ -1,3 +1,28 @@
+<?php
+require __DIR__ . '/../src/bootstrap.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'];
+    $password = $_POST['pwd'];
+    $password_confirm = $_POST['pwd2'];
+
+    if ($password !== $password_confirm) {
+        $error_message = "Passwords do not match.";
+    } else {
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        $sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$email, $hashed_password]);
+
+        header("Location: login.php");
+        exit();
+    }
+}
+
+view('header', ['title' => 'Register']);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,3 +62,5 @@
 </body>
 
 </html>
+
+<?php view('footer'); ?>
